@@ -71,8 +71,10 @@ function formatCsv(items: string[]): string {
 }
 
 async function main() {
+
+  const rpc = process.env.RPC_URL as string;
   const provider = new StaticJsonRpcBatchProvider(
-    " https://testnet.xai-chain.net/rpc",
+    rpc,
     59140
   );
   const sdk = new ThirdwebSDK(provider, {secretKey: process.env.THIRDWEB_API_SECRET as string});
