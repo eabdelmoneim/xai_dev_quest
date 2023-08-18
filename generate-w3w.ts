@@ -4,14 +4,13 @@ import fs from "fs";
 
 config();
 
-const CHAIN_IDENTIFIER = "xai-goerli-orbit";
 const PET_CONTRACT_ADDRESS = "0x40da2B4a5feB3ABD0FF7fD12C158C0ddbF6391e0";
 const ARMOR_CONTRACT_ADDRESS = "0x9E7ADF51b3517355A0b5F6541D1FB089F3aDbA40";
 const WEAPON_CONTRACT_ADDRESS = "0x5727d991BC6D46Ab8163d468Bd49Ab4A427B5798";
 
 const main = async () => {
 	try {
-		const sdk = new ThirdwebSDK(CHAIN_IDENTIFIER, {
+		const sdk = new ThirdwebSDK(process.env.RPC_URL as string, {
 			secretKey: process.env.THIRDWEB_API_SECRET,
 		});
 
