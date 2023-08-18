@@ -1,0 +1,7 @@
+node_modules
+completed/
+*.csv
+logs-*.json
+contracts.json
+*.gz
+.env

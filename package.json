@@ -1,0 +1,17 @@
+{
+  "name": "test-scripts",
+  "scripts": {
+    "generate": "NODE_OPTIONS=\"--max-old-space-size=8096\" npx ts-node generate.ts"
+  },
+  "dependencies": {
+    "@thirdweb-dev/sdk": "^3.10.50",
+    "dotenv": "^16.3.1",
+    "ethers": "5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5",
+    "@types/node-fetch": "^2.6.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  }
+}
