@@ -15,6 +15,7 @@ All the variables `START_BLOCK`, `END_BLOCK`, `BATCH_SIZE`, `TX_BATCH_SIZE` are 
 ## Running the Script
 
 `yarn generate`
+
 `yarn generate:w3w` for web3 warriors quests
 
 ## Output
