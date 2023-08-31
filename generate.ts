@@ -8,8 +8,8 @@ dotenv.config();
 
 // ========= EDIT ========= //
 
-const START_BLOCK = 0; 
-const END_BLOCK = 360;
+const START_BLOCK = 6388; 
+const END_BLOCK = 10438;
 
 // ========= EDIT ========= //
 
@@ -81,6 +81,9 @@ async function main() {
 
   // Step 1: Get all addresses that claimed tokens from TokenDrop
   const step1 = await getAllClaimersTestToken(sdk);
+
+  console.log(`Completed step 1: ${Array.from(new Set(step1)).length}`);
+  fs.writeFileSync("completed_step_1.csv", formatCsv(step1), "utf-8");
 
   // Step 2: Get all addresses that deployed an Edition Drop 
   // Filter on parsed logs with the TokenDrop implementation address
@@ -172,8 +175,7 @@ async function main() {
         })
     );
 
-    console.log(`Completed step 1: ${Array.from(new Set(step1)).length}`);
-    fs.writeFileSync("completed_step_1.csv", formatCsv(step1), "utf-8");
+
   
     console.log(`Completed step 2: ${Array.from(new Set(step2)).length}`);
     fs.writeFileSync("completed_step_2.csv", formatCsv(step2), "utf-8");
