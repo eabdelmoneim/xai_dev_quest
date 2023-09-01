@@ -1,6 +1,7 @@
 import { config } from "dotenv";
-import { SmartContract, ThirdwebSDK, getBlock } from "@thirdweb-dev/sdk";
+import { SmartContract, ThirdwebSDK, getBlock, getBlockNumber } from "@thirdweb-dev/sdk";
 import fs from "fs";
+import { log } from "console";
 
 config();
 
@@ -13,6 +14,9 @@ const PET_CONTRACT_ADDRESS = "0x40da2B4a5feB3ABD0FF7fD12C158C0ddbF6391e0";
 const ARMOR_CONTRACT_ADDRESS = "0x9E7ADF51b3517355A0b5F6541D1FB089F3aDbA40";
 const WEAPON_CONTRACT_ADDRESS = "0x5727d991BC6D46Ab8163d468Bd49Ab4A427B5798";
 const RPC = process.env.RPC_URL;
+
+const BLOCK_BATCH_SIZE = 1000;
+const BLOCK_BATCH_DELAY_MS = 10000;
 
 const main = async () => {
 	try {
@@ -404,76 +408,86 @@ const main = async () => {
 main();
 
 const getOwnerDataFromTransferEvents = async (contract: SmartContract) => {
-	let transferEvents: any[] = [];
-	try {
-		transferEvents = await contract.events.getEvents("TransferSingle", { order: "desc" });
-	} catch (error) {
-		console.error("Error fetching transfer events:", error);
-		return new Map<string, OwnedIdData[]>();
-	}
+	const latestBlock = await getBlockNumber({ network: RPC as string });
+	let FROM_BLOCK = 0;
+	let TO_BLOCK = FROM_BLOCK + BLOCK_BATCH_SIZE > latestBlock ? latestBlock : FROM_BLOCK + BLOCK_BATCH_SIZE;
 
 	const ownersMap: Map<string, OwnedIdData[]> = new Map<string, OwnedIdData[]>();
 
-	for (const event of transferEvents) {
-		const tokenId = event.data["id"];
-		const fromAddress = event.data["from"];
-		const toAddress = event.data["to"];
-		const timestamp = (
-			await getBlock({
-				network: RPC as string,
-				block: event.transaction.blockNumber,
-			})
-		).timestamp;
-
-		if (!ownersMap.has(toAddress)) {
-			ownersMap.set(toAddress, []);
+	do {
+		let transferEvents: any[] = [];
+		try {
+			transferEvents = await contract.events.getEvents("TransferSingle", { order: "desc", fromBlock: FROM_BLOCK, toBlock: TO_BLOCK });
+		} catch (error) {
+			console.error("Error fetching transfer events:", error);
+			return new Map<string, OwnedIdData[]>();
 		}
 
-		const ownedIdData: OwnedIdData = {
-			id: tokenId,
-			timestamp,
-		};
+		for (const event of transferEvents) {
+			const tokenId = event.data["id"];
+			const fromAddress = event.data["from"];
+			const toAddress = event.data["to"];
+			const timestamp = (
+				await getBlock({
+					network: RPC as string,
+					block: event.transaction.blockNumber,
+				})
+			).timestamp;
 
-		if (ownersMap.has(fromAddress)) {
-			const prevOwnerOwnedIds = ownersMap.get(fromAddress)!;
-			const prevIndex = prevOwnerOwnedIds.findIndex((data) => data.id === tokenId);
-			if (prevIndex !== -1) {
-				prevOwnerOwnedIds.splice(prevIndex, 1);
-				// If the previous owner no longer has any tokens, remove the owner from the map
-				if (prevOwnerOwnedIds.length === 0) {
-					ownersMap.delete(fromAddress);
+			if (!ownersMap.has(toAddress)) {
+				ownersMap.set(toAddress, []);
+			}
+
+			const ownedIdData: OwnedIdData = {
+				id: tokenId,
+				timestamp,
+			};
+
+			if (ownersMap.has(fromAddress)) {
+				const prevOwnerOwnedIds = ownersMap.get(fromAddress)!;
+				const prevIndex = prevOwnerOwnedIds.findIndex((data) => data.id === tokenId);
+				if (prevIndex !== -1) {
+					prevOwnerOwnedIds.splice(prevIndex, 1);
+					// If the previous owner no longer has any tokens, remove the owner from the map
+					if (prevOwnerOwnedIds.length === 0) {
+						ownersMap.delete(fromAddress);
+					}
 				}
 			}
-		}
 
-		const ownerOwnedIds = ownersMap.get(toAddress);
-		if (!ownerOwnedIds) {
-			continue;
-		}
-		const existingData = ownerOwnedIds.find((data) => data.id === tokenId);
-		if (!existingData) {
-			ownerOwnedIds.push(ownedIdData);
-		}
-	}
-
-	// Ensure each owner has only unique token IDs with the earliest timestamp
-	for (const [owner, ownedIds] of ownersMap.entries()) {
-		const groupedById = ownedIds.reduce((acc: { [id: string]: OwnedIdData[] }, curr) => {
-			if (!acc[curr.id]) {
-				acc[curr.id] = [];
+			const ownerOwnedIds = ownersMap.get(toAddress);
+			if (!ownerOwnedIds) {
+				continue;
 			}
-			acc[curr.id].push(curr);
-			return acc;
-		}, {});
+			const existingData = ownerOwnedIds.find((data) => data.id === tokenId);
+			if (!existingData) {
+				ownerOwnedIds.push(ownedIdData);
+			}
+		}
 
-		const filteredIds = Object.values(groupedById).map((idGroup) => {
-			return idGroup.reduce((earliest, curr) => {
-				return curr.timestamp < earliest.timestamp ? curr : earliest;
+		// Ensure each owner has only unique token IDs with the earliest timestamp
+		for (const [owner, ownedIds] of ownersMap.entries()) {
+			const groupedById = ownedIds.reduce((acc: { [id: string]: OwnedIdData[] }, curr) => {
+				if (!acc[curr.id]) {
+					acc[curr.id] = [];
+				}
+				acc[curr.id].push(curr);
+				return acc;
+			}, {});
+
+			const filteredIds = Object.values(groupedById).map((idGroup) => {
+				return idGroup.reduce((earliest, curr) => {
+					return curr.timestamp < earliest.timestamp ? curr : earliest;
+				});
 			});
-		});
 
-		ownersMap.set(owner, filteredIds);
-	}
+			ownersMap.set(owner, filteredIds);
+		}
+		console.log(`Processed up to block ${TO_BLOCK} blocks, waiting ${BLOCK_BATCH_DELAY_MS / 1000}s before continuing...`);
+		FROM_BLOCK = TO_BLOCK;
+		TO_BLOCK = FROM_BLOCK + BLOCK_BATCH_SIZE > latestBlock ? latestBlock : FROM_BLOCK + BLOCK_BATCH_SIZE;
+		await new Promise((resolve) => setTimeout(resolve, BLOCK_BATCH_DELAY_MS));
+	} while (FROM_BLOCK < latestBlock);
 
 	return ownersMap;
 };
