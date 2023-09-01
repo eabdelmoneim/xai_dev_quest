@@ -15,7 +15,7 @@ const ARMOR_CONTRACT_ADDRESS = "0x9E7ADF51b3517355A0b5F6541D1FB089F3aDbA40";
 const WEAPON_CONTRACT_ADDRESS = "0x5727d991BC6D46Ab8163d468Bd49Ab4A427B5798";
 const RPC = process.env.RPC_URL;
 
-const BLOCK_BATCH_SIZE = 1000;
+const BLOCK_BATCH_SIZE = 5000;
 const BLOCK_BATCH_DELAY_MS = 10000;
 
 const main = async () => {
@@ -28,17 +28,24 @@ const main = async () => {
 		const armorContract = await sdk.getContract(ARMOR_CONTRACT_ADDRESS);
 		const weaponContract = await sdk.getContract(WEAPON_CONTRACT_ADDRESS);
 
+		console.log("Fetching pet owners data...");
 		const petOwnersData = await getOwnerDataFromTransferEvents(petContract);
+		console.log("Fetching armor owners data...");
 		const armorOwnersData = await getOwnerDataFromTransferEvents(armorContract);
+		console.log("Fetching weapon owners data...");
 		const weaponOwnersData = await getOwnerDataFromTransferEvents(weaponContract);
+
+		await new Promise((resolve) => setTimeout(resolve, 10000));
 
 		// Combine all unique owners
 		const allOwners = [...new Set([...petOwnersData.keys(), ...armorOwnersData.keys(), ...weaponOwnersData.keys()])];
+		console.log(`Total unique owners: ${allOwners.length}`);
 
 		let armorsOwned: Map<string, string[]> = new Map<string, string[]>();
 		let weaponsOwned: Map<string, string[]> = new Map<string, string[]>();
 		let uniquePetsOwned: Map<string, number> = new Map<string, number>();
 
+		let counter = 0;
 		for (const owner of allOwners) {
 			const ownedArmors = await armorContract.erc1155.getOwned(owner);
 			const ownedWeapons = await weaponContract.erc1155.getOwned(owner);
@@ -58,6 +65,12 @@ const main = async () => {
 				const petIdsOwned = ownedPets.map((pet) => pet.metadata.id);
 				const uniquePetIdsOwned = [...new Set(petIdsOwned)];
 				uniquePetsOwned.set(owner, uniquePetIdsOwned.length);
+			}
+
+			counter++;
+			if (counter % 25 === 0) {
+				console.log(`Processed ${counter} owners, waiting 10 seconds...`);
+				await new Promise((resolve) => setTimeout(resolve, 10000));
 			}
 		}
 
