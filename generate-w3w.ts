@@ -385,5 +385,5 @@ const getFinalOwnersFromTransferEvents = async (contract: SmartContract) => {
 };
 
 function formatCsv(items: string[]): string {
-	return `wallet_addresses\n${Array.from(new Set(items)).join("\n")}`;
+	return `${Array.from(new Set(items)).join("\n")}`;
 }
