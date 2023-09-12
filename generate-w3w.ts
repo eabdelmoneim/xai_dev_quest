@@ -9,7 +9,7 @@ const ARMOR_CONTRACT_ADDRESS = "0x9E7ADF51b3517355A0b5F6541D1FB089F3aDbA40";
 const WEAPON_CONTRACT_ADDRESS = "0x5727d991BC6D46Ab8163d468Bd49Ab4A427B5798";
 const RPC = process.env.RPC_URL;
 
-const BLOCK_BATCH_SIZE = 10000;
+const BLOCK_BATCH_SIZE = 100000;
 const BLOCK_BATCH_DELAY_MS = 10000;
 
 const main = async () => {
@@ -37,34 +37,54 @@ const main = async () => {
 		let weaponsOwned: Map<string, string[]> = new Map<string, string[]>();
 		let uniquePetsOwned: Map<string, number> = new Map<string, number>();
 
-		let counter = 0;
-		for (const owner of allOwners) {
-			const ownedArmors = await armorContract.erc1155.getOwned(owner);
-			const ownedWeapons = await weaponContract.erc1155.getOwned(owner);
-			const ownedPets = await petContract.erc1155.getOwned(owner);
+		const armorCount = (await armorContract.erc1155.totalCount()).toNumber();
+		const weaponCount = (await weaponContract.erc1155.totalCount()).toNumber();
+		const petCount = (await petContract.erc1155.totalCount()).toNumber();
 
-			if (ownedArmors.length > 0) {
-				const armorIdsOwned = ownedArmors.map((armor) => armor.metadata.id);
-				armorsOwned.set(owner, armorIdsOwned);
-			}
-
-			if (ownedWeapons.length > 0) {
-				const weaponIdsOwned = ownedWeapons.map((weapon) => weapon.metadata.id);
-				weaponsOwned.set(owner, weaponIdsOwned);
-			}
-
-			if (ownedPets.length > 0) {
-				const petIdsOwned = ownedPets.map((pet) => pet.metadata.id);
-				const uniquePetIdsOwned = [...new Set(petIdsOwned)];
-				uniquePetsOwned.set(owner, uniquePetIdsOwned.length);
-			}
-
-			counter++;
-			if (counter % 25 === 0) {
-				console.log(`Processed ${counter} owners, waiting 10s...`);
-				await new Promise((resolve) => setTimeout(resolve, 10000));
+		for (let i = 0; i < armorCount; i++) {
+			const balances = await armorContract.call("balanceOfBatch", [allOwners, new Array(allOwners.length).fill(i.toString())]);
+			for (let j = 0; j < balances.length; j++) {
+				if (balances[j].toNumber() > 0) {
+					if (armorsOwned.has(allOwners[j])) {
+						armorsOwned.get(allOwners[j])?.push(i.toString());
+					} else {
+						armorsOwned.set(allOwners[j], [i.toString()]);
+					}
+				}
 			}
 		}
+
+		console.log("Done checking armors");
+
+		for (let i = 0; i < weaponCount; i++) {
+			const balances = await weaponContract.call("balanceOfBatch", [allOwners, new Array(allOwners.length).fill(i.toString())]);
+			for (let j = 0; j < balances.length; j++) {
+				if (balances[j].toNumber() > 0) {
+					if (weaponsOwned.has(allOwners[j])) {
+						weaponsOwned.get(allOwners[j])?.push(i.toString());
+					} else {
+						weaponsOwned.set(allOwners[j], [i.toString()]);
+					}
+				}
+			}
+		}
+
+		console.log("Done checking weapons");
+
+		for (let i = 0; i < petCount; i++) {
+			const balances = await petContract.call("balanceOfBatch", [allOwners, new Array(allOwners.length).fill(i.toString())]);
+			for (let j = 0; j < balances.length; j++) {
+				if (balances[j].toNumber() > 0) {
+					if (uniquePetsOwned.has(allOwners[j])) {
+						uniquePetsOwned.set(allOwners[j], (uniquePetsOwned.get(allOwners[j]) ?? 0) + 1);
+					} else {
+						uniquePetsOwned.set(allOwners[j], 1);
+					}
+				}
+			}
+		}
+
+		console.log("Done checking pets");
 
 		// W3W Goal 1: Obtain Voidcleaver Axe [Blue]
 		const goal1Owners = [...weaponsOwned.keys()].filter((owner) => weaponsOwned.get(owner)?.includes("0"));
@@ -369,19 +389,30 @@ const getFinalOwnersFromTransferEvents = async (contract: SmartContract) => {
 		throw new Error("Something went wrong fetching transfer events");
 	}
 
+	console.log(`Total transfer events: ${transferEvents.length}`);
+
 	let owners: string[] = [];
 	transferEvents.forEach((transferEvent) => {
 		owners.push(transferEvent.data["to"]);
 	});
 
-	owners.forEach(async (owner) => {
-		const balance = await contract.erc1155.balanceOf(owner, 0);
-		if (balance.toNumber() === 0) {
-			owners = owners.filter((o) => o !== owner);
-		}
-	});
+	const count = (await contract.erc1155.totalCount()).toNumber();
 
-	return owners;
+	console.log("Filtering owners that own at least one token...");
+
+	let ownAtLeastOneToken: string[] = [];
+	for (let i = 0; i < count; i++) {
+		const balances = await contract.call("balanceOfBatch", [owners, new Array(owners.length).fill(i)]);
+		for (let j = 0; j < balances.length; j++) {
+			if (balances[j].toNumber() > 0 && !ownAtLeastOneToken.includes(owners[j])) {
+				ownAtLeastOneToken.push(owners[j]);
+			}
+		}
+	}
+
+	console.log(`Total owners: ${ownAtLeastOneToken.length}`);
+
+	return ownAtLeastOneToken;
 };
 
 function formatCsv(items: string[]): string {
