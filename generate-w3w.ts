@@ -211,7 +211,7 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_31.csv", formatCsv(goal31Owners));
 
 		// W3W Goal 32: Obtain Bloodreaper Armor [Blue] - Male
-		const goal32Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("18"));
+		const goal32Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("24"));
 		fs.writeFileSync("w3w_goal_32.csv", formatCsv(goal32Owners));
 
 		// W3W Goal 33: Obtain At least 11 Pets
@@ -223,7 +223,7 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_34.csv", formatCsv(goal34Owners));
 
 		// W3W Goal 35: Obtain Bloodreaper Armor [Blue] - Female
-		const goal35Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("19"));
+		const goal35Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("25"));
 		fs.writeFileSync("w3w_goal_35.csv", formatCsv(goal35Owners));
 
 		// W3W Goal 36: Obtain At least 12 Pets
@@ -239,7 +239,7 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_38.csv", formatCsv(goal38Owners));
 
 		// W3W Goal 39: Obtain Necromancer Robes [Blue] - Male
-		const goal39Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("20"));
+		const goal39Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("18"));
 		fs.writeFileSync("w3w_goal_39.csv", formatCsv(goal39Owners));
 
 		// W3W Goal 40: Obtain Bloodreaper Armor [Purple] - Male
@@ -247,7 +247,7 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_40.csv", formatCsv(goal40Owners));
 
 		// W3W Goal 41: Obtain Deathstalker Armor [Blue] - Male
-		const goal41Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("32"));
+		const goal41Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("30"));
 		fs.writeFileSync("w3w_goal_41.csv", formatCsv(goal41Owners));
 
 		// W3W Goal 42: Obtain At least 13 Pets
@@ -263,7 +263,7 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_44.csv", formatCsv(goal44Owners));
 
 		// W3W Goal 45: Obtain Necromancer Robes [Blue] - Female
-		const goal45Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("21"));
+		const goal45Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("19"));
 		fs.writeFileSync("w3w_goal_45.csv", formatCsv(goal45Owners));
 
 		// W3W Goal 46: Obtain Bloodreaper Armor [Purple] - Female
@@ -271,7 +271,7 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_46.csv", formatCsv(goal46Owners));
 
 		// W3W Goal 47: Obtain Deathstalker Armor [Blue] - Female
-		const goal47Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("33"));
+		const goal47Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("31"));
 		fs.writeFileSync("w3w_goal_47.csv", formatCsv(goal47Owners));
 
 		// W3W Goal 48: Obtain At least 14 Pets
@@ -287,7 +287,7 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_50.csv", formatCsv(goal50Owners));
 
 		// W3W Goal 51: Obtain Necromancer Robes [Gray] - Male
-		const goal51Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("22"));
+		const goal51Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("20"));
 		fs.writeFileSync("w3w_goal_51.csv", formatCsv(goal51Owners));
 
 		// W3W Goal 52: Obtain Bloodreaper Armor [Red] - Male
@@ -295,7 +295,7 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_52.csv", formatCsv(goal52Owners));
 
 		// W3W Goal 53: Obtain Deathstalker Armor [Yellow] - Male
-		const goal53Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("34"));
+		const goal53Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("32"));
 		fs.writeFileSync("w3w_goal_53.csv", formatCsv(goal53Owners));
 
 		// W3W Goal 54: Obtain At least 15 Pets
@@ -311,7 +311,7 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_56.csv", formatCsv(goal56Owners));
 
 		// W3W Goal 57: Obtain Necromancer Robes [Gray] - Female
-		const goal57Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("23"));
+		const goal57Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("21"));
 		fs.writeFileSync("w3w_goal_57.csv", formatCsv(goal57Owners));
 
 		// W3W Goal 58: Obtain Bloodreaper Armor [Red] - Female
@@ -319,7 +319,7 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_58.csv", formatCsv(goal58Owners));
 
 		// W3W Goal 59: Obtain Deathstalker Armor [Yellow] - Female
-		const goal59Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("35"));
+		const goal59Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("33"));
 		fs.writeFileSync("w3w_goal_59.csv", formatCsv(goal59Owners));
 
 		// W3W Goal 60: Obtain At least 16 Pets
@@ -331,11 +331,11 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_61.csv", formatCsv(goal61Owners));
 
 		// W3W Goal 62: Obtain Necromancer Robes [Purple] - Male
-		const goal62Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("24"));
+		const goal62Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("22"));
 		fs.writeFileSync("w3w_goal_62.csv", formatCsv(goal62Owners));
 
 		// W3W Goal 63: Obtain Deathstalker Armor [Red] - Male
-		const goal63Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("30"));
+		const goal63Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("34"));
 		fs.writeFileSync("w3w_goal_63.csv", formatCsv(goal63Owners));
 
 		// W3W Goal 64: Obtain At least 17 Pets
@@ -347,11 +347,11 @@ const main = async () => {
 		fs.writeFileSync("w3w_goal_65.csv", formatCsv(goal65Owners));
 
 		// W3W Goal 66: Obtain Necromancer Robes [Purple] - Female
-		const goal66Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("25"));
+		const goal66Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("23"));
 		fs.writeFileSync("w3w_goal_66.csv", formatCsv(goal66Owners));
 
 		// W3W Goal 67: Obtain Deathstalker Armor [Red] - Female
-		const goal67Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("31"));
+		const goal67Owners = [...armorsOwned.keys()].filter((owner) => armorsOwned.get(owner)?.includes("35"));
 		fs.writeFileSync("w3w_goal_67.csv", formatCsv(goal67Owners));
 
 		// W3W Goal 68: Obtain At least 18 Pets
