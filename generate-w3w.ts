@@ -9,7 +9,7 @@ const ARMOR_CONTRACT_ADDRESS = "0x9E7ADF51b3517355A0b5F6541D1FB089F3aDbA40";
 const WEAPON_CONTRACT_ADDRESS = "0x5727d991BC6D46Ab8163d468Bd49Ab4A427B5798";
 const RPC = process.env.RPC_URL;
 
-const BLOCK_BATCH_SIZE = 100000;
+const BLOCK_BATCH_SIZE = 250000;
 const BLOCK_BATCH_DELAY_MS = 10000;
 
 const main = async () => {
@@ -401,11 +401,27 @@ const getFinalOwnersFromTransferEvents = async (contract: SmartContract) => {
 	console.log("Filtering owners that own at least one token...");
 
 	let ownAtLeastOneToken: string[] = [];
+	const ownersBatch = 5000;
+	const ownerChunks: string[][] = [];
+	for (let i = 0; i < owners.length; i += ownersBatch) {
+		ownerChunks.push(owners.slice(i, i + ownersBatch));
+	}
+
 	for (let i = 0; i < count; i++) {
-		const balances = await contract.call("balanceOfBatch", [owners, new Array(owners.length).fill(i)]);
-		for (let j = 0; j < balances.length; j++) {
-			if (balances[j].toNumber() > 0 && !ownAtLeastOneToken.includes(owners[j])) {
-				ownAtLeastOneToken.push(owners[j]);
+		let balances: any;
+		for (let j = 0; j < ownerChunks.length; j++) {
+			try {
+				balances = await contract.call("balanceOfBatch", [ownerChunks[j], new Array(ownerChunks[j].length).fill(i)]);
+				for (let k = 0; k < balances.length; k++) {
+					if (balances[k].toNumber() > 0 && !ownAtLeastOneToken.includes(ownerChunks[j][k])) {
+						ownAtLeastOneToken.push(ownerChunks[j][k]);
+					}
+				}
+			} catch {
+				console.log("Total chunks: " + ownerChunks.length);
+				console.log("Total owners in chunk: " + ownerChunks[j].length);
+				console.log(`Error fetching balance for owner chunk ${j} and token ${i}`);
+				throw new Error("Something went wrong fetching balance");
 			}
 		}
 	}
