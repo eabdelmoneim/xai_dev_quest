@@ -1,6 +1,7 @@
 import { config } from "dotenv";
 import { SmartContract, ThirdwebSDK, getBlockNumber } from "@thirdweb-dev/sdk";
 import fs from "fs";
+import { utils } from "ethers";
 
 config();
 
@@ -393,8 +394,12 @@ const getFinalOwnersFromTransferEvents = async (contract: SmartContract) => {
 
 	let owners: string[] = [];
 	transferEvents.forEach((transferEvent) => {
-		owners.push(transferEvent.data["to"]);
+		if (transferEvent.data["to"] !== "0x0000000000000000000000000000000000000000") {
+			owners.push(transferEvent.data["to"]);
+		}
 	});
+
+	owners = [...new Set(owners)];
 
 	const count = (await contract.erc1155.totalCount()).toNumber();
 
@@ -417,11 +422,11 @@ const getFinalOwnersFromTransferEvents = async (contract: SmartContract) => {
 						ownAtLeastOneToken.push(ownerChunks[j][k]);
 					}
 				}
-			} catch {
+			} catch (e) {
 				console.log("Total chunks: " + ownerChunks.length);
 				console.log("Total owners in chunk: " + ownerChunks[j].length);
 				console.log(`Error fetching balance for owner chunk ${j} and token ${i}`);
-				throw new Error("Something went wrong fetching balance");
+				throw e;
 			}
 		}
 	}
