@@ -10,7 +10,7 @@ const ARMOR_CONTRACT_ADDRESS = "0x9E7ADF51b3517355A0b5F6541D1FB089F3aDbA40";
 const WEAPON_CONTRACT_ADDRESS = "0x5727d991BC6D46Ab8163d468Bd49Ab4A427B5798";
 const RPC = process.env.RPC_URL;
 
-const BLOCK_BATCH_SIZE = 250000;
+const BLOCK_BATCH_SIZE = 100000;
 const BLOCK_BATCH_DELAY_MS = 10000;
 
 const main = async () => {
@@ -386,8 +386,9 @@ const getFinalOwnersFromTransferEvents = async (contract: SmartContract) => {
 			toBlock += BLOCK_BATCH_SIZE;
 			await new Promise((resolve) => setTimeout(resolve, BLOCK_BATCH_DELAY_MS));
 		} while (fromBlock < latestBlock);
-	} catch {
-		throw new Error("Something went wrong fetching transfer events");
+	} catch (e) {
+		console.log("Something went wrong fetching transfer events");
+		throw e;
 	}
 
 	console.log(`Total transfer events: ${transferEvents.length}`);
