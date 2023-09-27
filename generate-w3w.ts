@@ -358,6 +358,89 @@ const main = async () => {
 		// W3W Goal 68: Obtain At least 18 Pets
 		const goal68Owners = [...uniquePetsOwned.keys()].filter((owner) => (uniquePetsOwned.get(owner) ?? 0) >= 18);
 		fs.writeFileSync("w3w_goal_68.csv", formatCsv(goal68Owners));
+
+		// Aggregate all wallets and goals into two columns of a csv e.g wallet,goalNumber
+
+		const allWallets = [
+			[goal1Owners],
+			[goal2Owners],
+			[goal3Owners],
+			[goal4Owners],
+			[goal5Owners],
+			[goal6Owners],
+			[goal7Owners],
+			[goal8Owners],
+			[goal9Owners],
+			[goal10Owners],
+			[goal11Owners],
+			[goal12Owners],
+			[goal13Owners],
+			[goal14Owners],
+			[goal15Owners],
+			[goal16Owners],
+			[goal17Owners],
+			[goal18Owners],
+			[goal19Owners],
+			[goal20Owners],
+			[goal21Owners],
+			[goal22Owners],
+			[goal23Owners],
+			[goal24Owners],
+			[goal25Owners],
+			[goal26Owners],
+			[goal27Owners],
+			[goal28Owners],
+			[goal29Owners],
+			[goal30Owners],
+			[goal31Owners],
+			[goal32Owners],
+			[goal33Owners],
+			[goal34Owners],
+			[goal35Owners],
+			[goal36Owners],
+			[goal37Owners],
+			[goal38Owners],
+			[goal39Owners],
+			[goal40Owners],
+			[goal41Owners],
+			[goal42Owners],
+			[goal43Owners],
+			[goal44Owners],
+			[goal45Owners],
+			[goal46Owners],
+			[goal47Owners],
+			[goal48Owners],
+			[goal49Owners],
+			[goal50Owners],
+			[goal51Owners],
+			[goal52Owners],
+			[goal53Owners],
+			[goal54Owners],
+			[goal55Owners],
+			[goal56Owners],
+			[goal57Owners],
+			[goal58Owners],
+			[goal59Owners],
+			[goal60Owners],
+			[goal61Owners],
+			[goal62Owners],
+			[goal63Owners],
+			[goal64Owners],
+			[goal65Owners],
+			[goal66Owners],
+			[goal67Owners],
+			[goal68Owners],
+		];
+
+		let output: string = "";
+		for (let i = 0; i < allWallets.length; i++) {
+			for (let j = 0; j < allWallets[i].length; j++) {
+				for (let k = 0; k < allWallets[i][j].length; k++) {
+					output += `${allWallets[i][j][k]},${i + 1}\n`;
+				}
+			}
+		}
+		fs.writeFileSync("all_wallets_and_goals.csv", output);
 	} catch (e) {
 		console.error("Something went wrong: ", e);
 	}
