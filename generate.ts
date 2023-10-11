@@ -8,8 +8,8 @@ dotenv.config();
 
 // ========= EDIT ========= //
 
-const START_BLOCK = 6388; 
-const END_BLOCK = 10438;
+const START_BLOCK = 1557241; 
+const END_BLOCK = 1592100;
 
 // ========= EDIT ========= //
 
@@ -86,7 +86,7 @@ async function main() {
   fs.writeFileSync("completed_step_1.csv", formatCsv(step1), "utf-8");
 
   // Step 2: Get all addresses that deployed an Edition Drop 
-  // Filter on parsed logs with the TokenDrop implementation address
+  // Filter on parsed logs with the EditionDrop implementation address
   if (!fs.existsSync(`logs-from-${START_BLOCK}-to-${END_BLOCK}.json`)) {
     const logs = await getAllLogs(provider);
     const parsedLogs = logs
@@ -94,9 +94,10 @@ async function main() {
         return contract.interface.parseLog(log);
       })
       .filter((log) => {
+        //console.log("impl address: " + log.args.implementation.toLowerCase());
         return (
           log.args.implementation.toLowerCase() ===
-          "0x32b6bd0e80e761848b564b858aaddf89b7561f1d".toLowerCase()
+          "0x32b6bd0e80e761848b564b858aaddf89b7561f1d".toLowerCase() || log.args.implementation.toLowerCase() === "0x92d7704260b400fe515a8693a5178a8ff0dc6b55"
         );
       });
 
@@ -160,7 +161,7 @@ async function main() {
 
             // Step 3: Claimed a token means balance of deployer is >= 1
             const balance = await c.erc1155.balanceOf(deployerAddress, 0);
-            if (balance.toNumber() >= 1) {
+            if (balance.toBigInt() >= 1n) {
               step3.push(deployerAddress);
             } else {
               return;
