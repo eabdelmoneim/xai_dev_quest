@@ -8,8 +8,8 @@ dotenv.config();
 
 // ========= EDIT ========= //
 
-const START_BLOCK = 1557241; 
-const END_BLOCK = 1592100;
+const START_BLOCK = 17600000; 
+const END_BLOCK = 17623549;
 
 // ========= EDIT ========= //
 
@@ -94,10 +94,10 @@ async function main() {
         return contract.interface.parseLog(log);
       })
       .filter((log) => {
-        //console.log("impl address: " + log.args.implementation.toLowerCase());
+        console.log("impl address: " + log.args.implementation.toLowerCase());
         return (
-          log.args.implementation.toLowerCase() ===
-          "0x32b6bd0e80e761848b564b858aaddf89b7561f1d".toLowerCase() || log.args.implementation.toLowerCase() === "0x92d7704260b400fe515a8693a5178a8ff0dc6b55"
+          //log.args.implementation.toLowerCase() ===
+          "0x32b6bd0e80e761848b564b858aaddf89b7561f1d".toLowerCase() || log.args.implementation.toLowerCase() === "0x92d7704260b400fe515a8693a5178a8ff0dc6b55" || log.args.implementation.toLowerCase() === "0xcd21401087bad36360c48cb258efa234f46f8785"
         );
       });
 
