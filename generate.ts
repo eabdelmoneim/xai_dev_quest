@@ -8,8 +8,8 @@ dotenv.config();
 
 // ========= EDIT ========= //
 
-const START_BLOCK = 17600000; 
-const END_BLOCK = 17623549;
+const START_BLOCK = 7567000; 
+const END_BLOCK = 7568000;
 
 // ========= EDIT ========= //
 
@@ -75,7 +75,7 @@ async function main() {
   const rpc = process.env.RPC_URL as string;
   const provider = new StaticJsonRpcBatchProvider(
     rpc,
-    59140
+    660279
   );
   const sdk = new ThirdwebSDK(provider, {secretKey: process.env.THIRDWEB_API_SECRET as string});
 
@@ -94,10 +94,11 @@ async function main() {
         return contract.interface.parseLog(log);
       })
       .filter((log) => {
-        console.log("impl address: " + log.args.implementation.toLowerCase());
+        // console.log("impl address: " + log.args.implementation.toLowerCase());
+        // console.log(log.args.implementation.toLowerCase() === "0x54c97c29021a12cacb31f8388b32dd5486083f7b");
         return (
           //log.args.implementation.toLowerCase() ===
-          "0x32b6bd0e80e761848b564b858aaddf89b7561f1d".toLowerCase() || log.args.implementation.toLowerCase() === "0x92d7704260b400fe515a8693a5178a8ff0dc6b55" || log.args.implementation.toLowerCase() === "0xcd21401087bad36360c48cb258efa234f46f8785"
+          log.args.implementation.toLowerCase() === "0x54c97c29021a12cacb31f8388b32dd5486083f7b" // EditionDrop implementation address
         );
       });
 
