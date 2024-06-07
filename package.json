@@ -5,7 +5,7 @@
     "generate:w3w": "NODE_OPTIONS=\"--max-old-space-size=8096\" npx ts-node generate-w3w.ts"
   },
   "dependencies": {
-    "@thirdweb-dev/sdk": "^3.10.50",
+    "@thirdweb-dev/sdk": "3.10.50",
     "dotenv": "^16.3.1",
     "ethers": "5"
   },
